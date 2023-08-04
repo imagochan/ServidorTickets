@@ -50,3 +50,9 @@ app.get('/api/get_product',(req,res)=>{
         });
     }
 })
+
+//update api put
+
+app.put("/api/update/:id",(req,res)=>{
+    
+})
