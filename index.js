@@ -11,7 +11,7 @@ app.use(express.urlencoded({
 const productData = [];
 
 app.listen(4185,()=>{
-    console.log("Connected to server at 2000");
+    console.log("Connected to server at 4185");
 })
 
 //post api
