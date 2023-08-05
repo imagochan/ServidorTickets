@@ -42,8 +42,8 @@ const productData = [];
 
 const ticketData = [];
 
-app.listen(4185,()=>{
-    console.log("Connected to server at 4185");
+app.listen(2000,()=>{
+    console.log("Connected to server at 2000");
 })
 
 //post api
@@ -136,6 +136,22 @@ app.post("/api/update/:id",(req,res)=>{
     res.status(200).send({
         'status': "success",
         'message': "Product updated"
+    })
+
+})
+
+//update ticket api post
+
+app.post("/api/update_ticket/:id",(req,res)=>{
+    let id = req.params.id*1;//to return integer
+    let ticketToUpdate = ticketData.find(t=>t.id === id);//might need to chage id to tid if it doesn't work
+    let index = ticketData.indexOf(ticketToUpdate);
+
+    ticketData[index] = req.body;
+
+    res.status(200).send({
+        'status': "success",
+        'message': "Ticket updated"
     })
 
 })
