@@ -7,7 +7,7 @@ const { initializeApp, applicationDefault, cert } = require('firebase-admin/app'
 const { getFirestore, Timestamp, FieldValue, Filter } = require('firebase-admin/firestore');
 
 //const serviceAccount = require('./path/to/serviceAccountKey.json');
-const serviceAccount = require('json_key/test-project-fb8e5-90cf978b8a0b.json');
+const serviceAccount = require('./json_key/test-project-fb8e5-90cf978b8a0b.json');
 
 initializeApp({
     credential: cert(serviceAccount)
@@ -18,11 +18,19 @@ const db = getFirestore();
 // adding data
 const docRef = db.collection('users').doc('alovelace');
 
-await docRef.set({
-    first: 'Ada',
-    last: 'Lovelace',
-    born: 1815
-});
+// Start function
+const start = async function(a, b) {
+    const result = await docRef.set({
+        first: 'Ada',
+        last: 'Lovelace',
+        born: 1815
+    });
+    
+    console.log(result);
+}
+
+// Call start
+start();
 
 app.use(express.json());
 
