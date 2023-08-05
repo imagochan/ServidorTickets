@@ -144,7 +144,7 @@ app.post("/api/update/:id",(req,res)=>{
 
 app.post("/api/update_ticket/:id",(req,res)=>{
     let id = req.params.id*1;//to return integer
-    let ticketToUpdate = ticketData.find(t=>t.id === id);//might need to chage id to tid if it doesn't work
+    let ticketToUpdate = ticketData.find(t=>t.tid === id);//might need to chage id to tid if it doesn't work
     let index = ticketData.indexOf(ticketToUpdate);
 
     ticketData[index] = req.body;
@@ -153,6 +153,9 @@ app.post("/api/update_ticket/:id",(req,res)=>{
         'status': "success",
         'message': "Ticket updated"
     })
+
+    console.log("Ticket data is ",ticketData);
+    //console.log("Tdata is ",tdata);
 
 })
 
@@ -164,6 +167,21 @@ app.post("/api/delete/:id",(req,res)=>{
     let index = productData.indexOf(productToUpdate);
 
     productData.splice(index,1);
+
+    res.status(204).send({
+        'status':"success",
+        'message':"Product deleted"
+    })
+})
+
+// delete ticket api
+
+app.post("/api/delete_ticket/:id",(req,res)=>{
+    let id = req.params.id*1;//to return integer
+    let ticketToUpdate = ticketData.find(t=>t.tid === id);
+    let index = ticketData.indexOf(ticketToUpdate);
+
+    ticketData.splice(index,1);
 
     res.status(204).send({
         'status':"success",
