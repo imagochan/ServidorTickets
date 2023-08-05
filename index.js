@@ -15,22 +15,22 @@ initializeApp({
 
 const db = getFirestore();
 
-// adding data
-const docRef = db.collection('users').doc('alovelace');
+// // adding data
+// const docRef = db.collection('users').doc('alovelace');
 
-// Start function
-const start = async function(a, b) {
-    const result = await docRef.set({
-        first: 'Ada',
-        last: 'Lovelace',
-        born: 1815
-    });
+// // Start function
+// const start = async ()=> {
+//     const result = await docRef.set({
+//         first: 'Ada',
+//         last: 'Lovelace',
+//         born: 1815
+//     });
     
-    console.log(result);
-}
+//     console.log(result);
+// }
 
-// Call start
-start();
+// // Call start
+// start();
 
 app.use(express.json());
 
@@ -39,6 +39,8 @@ app.use(express.urlencoded({
 }));
 
 const productData = [];
+
+const ticketData = [];
 
 app.listen(4185,()=>{
     console.log("Connected to server at 4185");
@@ -66,6 +68,32 @@ app.post("/api/add_product",(req,res)=>{
     });
 })
 
+//post api ticket
+
+app.post("/api/add_ticket",(req,res)=>{
+    console.log("Result",req.body);
+
+    const tdata = {
+        "tid":ticketData.length+1,
+        "ttitulo":req.body.ttitulo,
+        "tdescripcion":req.body.tdescripcion,
+        "tfechaVencimiento":req.body.tfechaVencimiento,
+        "tfechaPublicacion":req.body.tfechaPublicacion,
+        "tfechaFinPublicacion":req.body.tfechaFinPublicacion,
+        "tvalorCompra":req.body.tvalorCompra,
+        "tcategoria":req.body.tcategoria,
+    };
+    
+    ticketData.push(tdata);
+    console.log("Final",tdata);
+
+    res.status(200).send({
+        "status_code":200,
+        "message":"Ticket added succesfully",
+        "ticket":tdata
+    });
+})
+
 // get api
 app.get('/api/get_product',(req,res)=>{
     if(productData.length>0){
@@ -77,6 +105,21 @@ app.get('/api/get_product',(req,res)=>{
         res.status(200).send({
             'status_code':200,
             'products':[]
+        });
+    }
+})
+
+// get ticket api
+app.get('/api/get_ticket',(req,res)=>{
+    if(ticketData.length>0){
+        res.status(200).send({
+            'status_code':200,
+            'tickets':ticketData
+        });
+    } else {
+        res.status(200).send({
+            'status_code':200,
+            'tickets':[]
         });
     }
 })
