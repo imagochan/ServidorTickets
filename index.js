@@ -111,6 +111,17 @@ app.post("/api/add_ticket", async (req,res)=>{
         categoria:req.body.tcategoria
     })
 
+    const snapshot = await ticketCollectionRef.get();
+    
+    if (snapshot.empty) {
+        console.log('No matching documents');
+        return;
+    }
+
+    snapshot.forEach(doc => {
+        console.log(doc.id, '=>', doc.data());
+    });
+
     const tdata = {
         "tid":ticketData.length+1,
         "ttitulo":req.body.ttitulo,
