@@ -186,7 +186,7 @@ app.get('/api/get_ticket', async (req,res)=>{
                 'fechaPublicacion:',doc.get('fechaPublicacion'),',',
                 'fechaFinPublicacion:',doc.get('fechaFinPublicacion'),',',
                 'valorCompra:',doc.get('valorCompra'),',',
-                'categoria:',doc.get('categoria'),','
+                'categoria:',doc.get('categoria'),'}'
         );
         res.status(200).send({
             'status_code':200,
