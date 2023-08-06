@@ -2,7 +2,16 @@ const express = require("express");
 
 const app = express();
 
-const { db } = require('./firebase.js')
+const { db } = require('./firebase.js');
+//const { WriteResult } = require("firebase-admin/firestore");
+
+// Import Admin SDK
+//const { getDatabase } = require('firebase-admin/database');
+
+// Get a database reference to our blog
+//const dbb = getDatabase();
+//const ref = dbb.ref('server/saving-data/fireblog');
+
 
 app.use(express.json());
 
@@ -42,7 +51,7 @@ app.post("/api/add_product",(req,res)=>{
 
 //post api ticket
 
-app.post("/api/add_ticket",(req,res)=>{
+app.post("/api/add_ticket2",(req,res)=>{
     console.log("Result",req.body);
 
     const tdata = {
@@ -57,6 +66,64 @@ app.post("/api/add_ticket",(req,res)=>{
     };
     
     ticketData.push(tdata);
+    console.log("Final",tdata);
+
+    res.status(200).send({
+        "status_code":200,
+        "message":"Ticket added succesfully",
+        "ticket":tdata
+    });
+})
+
+//post add api ticket into firebase
+const ticketCollectionRef = db.collection('tickets');
+
+app.post("/api/add_ticket", async (req,res)=>{
+    //console.log("Result",req.body);
+    //const ref = dbb.ref('server/saving-data/fireblog')
+
+    //ref.child()
+    //ref.push({
+    //    value:'a'
+    //})
+
+    //const ticketRef = db.collection('ticketStorage').doc('tickets')
+    
+    //const ticketRef2 = db.
+    
+    //const newTicketRef = ticketRef.pus
+
+    //var addYourDoc = db.collection('ticketStorage').add({
+        //property_key: 'property_value',
+    //}).then(ref => {
+//        console.log('document ID: ', ref.id);
+    //});
+
+    //ticketRef.create
+
+    const res2 = await ticketCollectionRef.add({
+        titulo:req.body.ttitulo,
+        descripcion:req.body.tdescripcion,
+        fechaVencimiento:req.body.tfechaVencimiento,
+        fechaPublicacion:req.body.tfechaPublicacion,
+        fechaFinPublicacion:req.body.tfechaFinPublicacion,
+        valorCompra:parseFloat(req.body.tvalorCompra),
+        categoria:req.body.tcategoria
+    })
+
+    const tdata = {
+        "tid":ticketData.length+1,
+        "ttitulo":req.body.ttitulo,
+        "tdescripcion":req.body.tdescripcion,
+        "tfechaVencimiento":req.body.tfechaVencimiento,
+        "tfechaPublicacion":req.body.tfechaPublicacion,
+        "tfechaFinPublicacion":req.body.tfechaFinPublicacion,
+        "tvalorCompra":req.body.tvalorCompra,
+        "tcategoria":req.body.tcategoria,
+    };
+    
+    ticketData.push(tdata);
+    
     console.log("Final",tdata);
 
     res.status(200).send({
