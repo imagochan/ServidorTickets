@@ -179,8 +179,6 @@ app.post("/api/update_ticket2/:id", (req, res) => {
 //update ticket api post with firebase!!!!!!!!!!
 
 app.post("/api/update_ticket/:id", async (req, res) => {
-  
-  //const snapshot = await ticketCollectionRef.get();
 
   const ticketDocumentRef = db.collection('tickets').doc(req.params.id)
 
@@ -190,25 +188,15 @@ app.post("/api/update_ticket/:id", async (req, res) => {
     fechaVencimiento:req.body.fechaVencimiento,
     fechaPublicacion:req.body.fechaPublicacion,
     fechaFinPublicacion:req.body.fechaFinPublicacion,
-    //valorCompra:req.body.valorCompra,
     valorCompra:parseFloat(req.body.valorCompra),
     categoria:req.body.categoria,
   })
 
-  //let id = req.params.id;//not an integer anymore
-
-  //let ticketToUpdate = ticketData.find(t => t.tid === id);//might need to chage id to tid if it doesn't work
-  //let index = ticketData.indexOf(ticketToUpdate);
-
-  //ticketData[index] = req.body;
 
   res.status(200).send({
     'status': "success",
     'message': "Ticket updated"
   })
-
-  //console.log("Ticket data is ", ticketData);
-  //console.log("Tdata is ",tdata);
 
 })
 
@@ -230,7 +218,7 @@ app.post("/api/delete/:id", (req, res) => {
 
 // delete ticket api
 
-app.post("/api/delete_ticket/:id", (req, res) => {
+app.post("/api/delete_ticket2/:id", (req, res) => {
   let id = req.params.id * 1;//to return integer
   let ticketToUpdate = ticketData.find(t => t.tid === id);
   let index = ticketData.indexOf(ticketToUpdate);
@@ -240,5 +228,20 @@ app.post("/api/delete_ticket/:id", (req, res) => {
   res.status(204).send({
     'status': "success",
     'message': "Product deleted"
+  })
+})
+
+// delete ticket api with firebase
+
+app.post("/api/delete_ticket/:id", async (req, res) => {
+
+  const ticketDocumentRef = db.collection('tickets').doc(req.params.id).delete();
+
+  //const res2 = await ticketDocumentRef.delete
+
+
+  res.status(200).send({
+    'status': "success",
+    'message': "Ticket deleted"
   })
 })
