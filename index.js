@@ -21,7 +21,7 @@ app.use(express.urlencoded({
 
 const productData = [];
 
-const ticketData = [];
+var ticketData = [];
 
 app.listen(2000,()=>{
     console.log("Connected to server at 2000");
@@ -160,17 +160,39 @@ app.get('/api/get_product',(req,res)=>{
 })
 
 // get ticket api
-app.get('/api/get_ticket',(req,res)=>{
-    if(ticketData.length>0){
-        res.status(200).send({
-            'status_code':200,
-            'tickets':ticketData
-        });
-    } else {
+app.get('/api/get_ticket', async (req,res)=>{
+
+    const snapshot = await ticketCollectionRef.get();
+
+    ticketData = [];
+    
+    if (snapshot.empty) {
+        console.log('No matching documents');
         res.status(200).send({
             'status_code':200,
             'tickets':[]
         });
+        return;
+    } else {
+        snapshot.forEach(doc => {
+            //console.log(doc.id,doc.get('categoria'));
+            //console.log(doc.id, '=>', doc.data());
+            ticketData.push(
+                '{',
+                'id:',doc.id,',',
+                'titulo:',doc.get('titulo'),',',
+                'descripcion:',doc.get('descripcion'),',',
+                'fechaVencimiento:',doc.get('fechaVencimiento'),',',
+                'fechaPublicacion:',doc.get('fechaPublicacion'),',',
+                'fechaFinPublicacion:',doc.get('fechaFinPublicacion'),',',
+                'valorCompra:',doc.get('valorCompra'),',',
+                'categoria:',doc.get('categoria'),','
+        );
+        res.status(200).send({
+            'status_code':200,
+            'tickets':ticketData
+        });
+        })
     }
 })
 
