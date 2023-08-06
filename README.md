@@ -1,9 +1,15 @@
-# node_server
+# Servidor Node.js con Firestore para servir tickets
 
-Servidor en Node.js que utiliza http para servir con una API las funciones de:
+Dicho servidor se conecta a una aplicación escrita en flutter.
+- https://github.com/imagochan/AppTickets
+
+Este servidor utiliza http para servir una API las funciones de:
 - CREATE
 - READ
 - UPDATE
 - DELETE
 
-Dicho servidor se conecta a una aplicación en flutter.
+Como base de datos utiliza Firestore para almacenar y recuperar datos.
+
+
+
