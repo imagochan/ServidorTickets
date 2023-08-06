@@ -2,24 +2,7 @@ const express = require("express");
 
 const app = express();
 
-
-
-// // adding data
-// const docRef = db.collection('users').doc('alovelace');
-
-// // Start function
-// const start = async ()=> {
-//     const result = await docRef.set({
-//         first: 'Ada',
-//         last: 'Lovelace',
-//         born: 1815
-//     });
-    
-//     console.log(result);
-// }
-
-// // Call start
-// start();
+const { db } = require('./firebase.js')
 
 app.use(express.json());
 
