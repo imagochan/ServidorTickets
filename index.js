@@ -1,6 +1,11 @@
+//importar express
 const express = require("express");
 const app = express();
+
+//importar firebase/firestore
 const { db } = require('./firebase.js');
+
+//referencia a "tabla" de tickets en firestore
 const ticketCollectionRef = db.collection('tickets');
 
 app.use(express.json());
@@ -8,15 +13,20 @@ app.use(express.urlencoded({
   extended: true
 }));
 
+//Array para preparar datos a enviar en json
 var ticketData = [];
 
+//Iniciar el servidor en el puerto 2000 con la IP del equipo corriendo el servidor
 app.listen(2000, () => {
   console.log("Connected to server at 2000");
 })
 
-//add ticket api with firestore
+//API para crear tickets y almacenarlos en firestore
+
+//recibe un json enviado desde la App de tickets y lo guarda en firestore
 app.post("/api/add_ticket", async (req, res) => {
 
+  //Añadimos un ticket a la colección de tickets en firestore
   const res2 = await ticketCollectionRef.add({
     titulo: req.body.titulo,
     descripcion: req.body.descripcion,
@@ -27,19 +37,26 @@ app.post("/api/add_ticket", async (req, res) => {
     categoria: req.body.categoria
   })
 
+  //respondemos a la solicitud
   res.status(200).send({
     "status_code": 200,
     "message": "Ticket added succesfully",
   });
 })
 
-// get ticket api with firestore
+//API para listar tickets existentes almacenados en firestore
+
+//Recolecta los tickets en la colección de tickets en firestore
+//Envia los tickets como un array que serán recibidos en la App.
 app.get('/api/get_ticket', async (req, res) => {
 
+  //Recibimos información de la colección de tickets con un snapshot
   const snapshot = await ticketCollectionRef.get();
 
+  //limpiamos el array de tickets a enviar 
   ticketData = [];
 
+  //llenamos el array con los tickets existentes en firestore
   snapshot.forEach(doc => {
     const tdata = {
       'id': doc.id,
@@ -56,6 +73,7 @@ app.get('/api/get_ticket', async (req, res) => {
 
   console.log(ticketData);
 
+  //Si no hay documentos/filas devolvemos un array vacío
   if (snapshot.empty) {
     console.log('No matching documents');
     res.status(200).send({
@@ -63,6 +81,7 @@ app.get('/api/get_ticket', async (req, res) => {
       'tickets': []
     });
     return;
+  //Caso contrario enviamos el array de tickets a la App
   } else {
     res.status(200).send({
       'status_code': 200,
@@ -71,10 +90,15 @@ app.get('/api/get_ticket', async (req, res) => {
   }
 })
 
-//update ticket api with firestore
-app.post("/api/update_ticket/:id", async (req, res) => {
-  const ticketDocumentRef = db.collection('tickets').doc(req.params.id)
+//APi para actualizar un ticket de la lista de tickets en firestore
 
+//Recibimos un ticket desde la App 
+//para reemplazar la información del ticket existente a partir de su id
+app.post("/api/update_ticket/:id", async (req, res) => {
+  //obtenemos una referencia al ticket usando el id recibido desde la App
+  const ticketDocumentRef = db.collection('tickets').doc(req.params.id) 
+
+  //actualizamos los datos del ticket actual
   const res2 = await ticketDocumentRef.set({
     titulo:req.body.titulo,
     descripcion:req.body.descripcion,
@@ -85,17 +109,24 @@ app.post("/api/update_ticket/:id", async (req, res) => {
     categoria:req.body.categoria,
   })
 
+  //respondemos a la solicitud
   res.status(200).send({
     'status': "success",
     'message': "Ticket updated"
   })
 })
 
-// delete ticket api with firestore
+
+//API para borrar un ticket almacenado en firestore
+
+//Recibimos el id del ticket a borrar y
+//procedemos a borrar dicho ticket en firestore
 app.post("/api/delete_ticket/:id", async (req, res) => {
 
+  //obtenemos una referencia al ticket e invocamos la función de borrado
   const ticketDocumentRef = db.collection('tickets').doc(req.params.id).delete();
 
+  //respondemos a la solicitud
   res.status(200).send({
     'status': "success",
     'message': "Ticket deleted"
