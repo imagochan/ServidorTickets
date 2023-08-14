@@ -20,9 +20,10 @@ app.post("/api/add_ticket", async (req, res) => {
   const res2 = await ticketCollectionRef.add({
     titulo: req.body.titulo,
     descripcion: req.body.descripcion,
-    fechaVencimiento: req.body.fechaVencimiento,
-    fechaPublicacion: req.body.fechaPublicacion,
-    fechaFinPublicacion: req.body.fechaFinPublicacion,
+    //new Date() instead of Date.parse
+    fechaVencimiento: new Date(req.body.fechaVencimiento),
+    fechaPublicacion: new Date(req.body.fechaPublicacion),
+    fechaFinPublicacion: new Date(req.body.fechaFinPublicacion),
     valorCompra: parseFloat(req.body.valorCompra),
     categoria: req.body.categoria
   })
