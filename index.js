@@ -59,13 +59,20 @@ app.get('/api/get_ticket', async (req, res) => {
 
   //llenamos el array con los tickets existentes en firestore
   snapshot.forEach(doc => {
+    const fechaVenc = doc.get('fechaVencimiento');
+    const fechaPubli = doc.get('fechaPublicacion');
+    const fechaFinPubli = doc.get('fechaFinPublicacion');
+    var nuevafechavenc = fechaVenc.toDate();
+    var nuevafechapubli = fechaPubli.toDate();
+    var nuevafechafinpubli = fechaFinPubli.toDate();
     const tdata = {
       'id': doc.id,
       'titulo': doc.get('titulo'),
       'descripcion': doc.get('descripcion'),
-      'fechaVencimiento': doc.get('fechaVencimiento'),
-      'fechaPublicacion': doc.get('fechaPublicacion'),
-      'fechaFinPublicacion': doc.get('fechaFinPublicacion'),
+      //'fechaVencimiento': doc.get('fechaVencimiento'),
+      'fechaVencimiento': nuevafechavenc,
+      'fechaPublicacion': nuevafechapubli,
+      'fechaFinPublicacion': nuevafechafinpubli,
       'valorCompra': doc.get('valorCompra'),
       'categoria': doc.get('categoria')
     };
