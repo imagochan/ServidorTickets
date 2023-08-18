@@ -53,6 +53,7 @@ app.get('/api/get_ticket', async (req, res) => {
 
   //Recibimos información de la colección de tickets con un snapshot
   const snapshot = await ticketCollectionRef.get();
+  const snapshot2 = await ticketCollectionRef.where('titulo','==','Barbie').get();
 
   //limpiamos el array de tickets a enviar 
   ticketData = [];
@@ -124,7 +125,6 @@ app.post("/api/update_ticket/:id", async (req, res) => {
     'message': "Ticket updated"
   })
 })
-
 
 //API para borrar un ticket almacenado en firestore
 
