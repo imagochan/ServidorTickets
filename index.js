@@ -59,6 +59,7 @@ app.get('/api/get_ticket', async (req, res) => {
 
   //llenamos el array con los tickets existentes en firestore
   snapshot.forEach(doc => {
+    // { timestamp: time 2323 seconds 2323 }
     const fechaVenc = doc.get('fechaVencimiento');
     const fechaPubli = doc.get('fechaPublicacion');
     const fechaFinPubli = doc.get('fechaFinPublicacion');
