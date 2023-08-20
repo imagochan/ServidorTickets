@@ -77,13 +77,14 @@ app.get('/api/get_ticket', async (req, res) => {
 
   //Recibimos información de la colección de tickets con un snapshot
   const snapshot = await ticketCollectionRef.get();
+  const snapshot2 = await ticketCollectionRef.where('titulo','==','Barbie').get();
 
   //limpiamos el array de tickets a enviar 
   ticketData = [];
 
   //llenamos el array con los tickets existentes en firestore
   snapshot.forEach(doc => {
-
+    // { timestamp: time 2323 seconds 2323 }
     const fechaVenc = doc.get('fechaVencimiento');
     const fechaPubli = doc.get('fechaPublicacion');
     const fechaFinPubli = doc.get('fechaFinPublicacion');
@@ -152,7 +153,6 @@ app.post("/api/update_ticket/:id", async (req, res) => {
     'message': "Ticket updated"
   })
 })
-
 
 //API para borrar un ticket almacenado en firestore
 
