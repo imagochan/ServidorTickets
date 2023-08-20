@@ -54,19 +54,20 @@ app.get('/api/get_ticket', async (req, res) => {
   // Access the provided query parameters
   let categoria = req.query.categoria;
 
-  if ( typeof categoria === 'undefined' ) //if ( categoria ) also works
+  if ( categoria == 'undefined' || categoria == 'null' ) //if ( categoria ) also works
   {
     //do stuff if query is defined and not null
-    console.log("categoria es definido y no nulo");
+    console.log("categoria no esta definido o es nulo");
 
     //Recibimos información de la colección de tickets con un snapshot
-    const snapshot = await ticketCollectionRef.get();
+    var snapshot = await ticketCollectionRef.get();
   }
   else
   {
-    console.log("categoria no esta definido o es nulo");
+    console.log("categoria es definido y no nulo");
     //Recibimos información de la colección de tickets con un snapshot
-    const snapshot = await ticketCollectionRef.get();
+    //const snapshot = await ticketCollectionRef.get();
+    var snapshot = await ticketCollectionRef.where('categoria','==',categoria).get();
   }
 
   console.log("imprimiendo categoria para ver como llega sin el query parameter");
@@ -76,8 +77,9 @@ app.get('/api/get_ticket', async (req, res) => {
   console.log(categoria);
 
   //Recibimos información de la colección de tickets con un snapshot
-  const snapshot = await ticketCollectionRef.get();
-  const snapshot2 = await ticketCollectionRef.where('titulo','==','Barbie').get();
+  
+  //const snapshot = await ticketCollectionRef.get();
+  //const snapshot2 = await ticketCollectionRef.where('titulo','==','Barbie').get();
 
   //limpiamos el array de tickets a enviar 
   ticketData = [];
@@ -109,7 +111,8 @@ app.get('/api/get_ticket', async (req, res) => {
 
   })
 
-  console.log(ticketData);
+  // imprimir la lista de tickets
+  //console.log(ticketData);
 
   //Si no hay documentos/filas devolvemos un array vacío
   if (snapshot.empty) {
