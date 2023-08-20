@@ -51,6 +51,30 @@ app.post("/api/add_ticket", async (req, res) => {
 //Envia los tickets como un array que serán recibidos en la App.
 app.get('/api/get_ticket', async (req, res) => {
 
+  // Access the provided query parameters
+  let categoria = req.query.categoria;
+
+  if ( typeof categoria === 'undefined' ) //if ( categoria ) also works
+  {
+    //do stuff if query is defined and not null
+    console.log("categoria es definido y no nulo");
+
+    //Recibimos información de la colección de tickets con un snapshot
+    const snapshot = await ticketCollectionRef.get();
+  }
+  else
+  {
+    console.log("categoria no esta definido o es nulo");
+    //Recibimos información de la colección de tickets con un snapshot
+    const snapshot = await ticketCollectionRef.get();
+  }
+
+  console.log("imprimiendo categoria para ver como llega sin el query parameter");
+  console.log(categoria);
+
+  console.log("La categoria recibida como query parameter en el request es:")
+  console.log(categoria);
+
   //Recibimos información de la colección de tickets con un snapshot
   const snapshot = await ticketCollectionRef.get();
 
@@ -59,12 +83,15 @@ app.get('/api/get_ticket', async (req, res) => {
 
   //llenamos el array con los tickets existentes en firestore
   snapshot.forEach(doc => {
+
     const fechaVenc = doc.get('fechaVencimiento');
     const fechaPubli = doc.get('fechaPublicacion');
     const fechaFinPubli = doc.get('fechaFinPublicacion');
+
     var nuevafechavenc = fechaVenc.toDate();
     var nuevafechapubli = fechaPubli.toDate();
     var nuevafechafinpubli = fechaFinPubli.toDate();
+
     const tdata = {
       'id': doc.id,
       'titulo': doc.get('titulo'),
@@ -76,7 +103,9 @@ app.get('/api/get_ticket', async (req, res) => {
       'valorCompra': doc.get('valorCompra'),
       'categoria': doc.get('categoria')
     };
+
     ticketData.push(tdata);
+
   })
 
   console.log(ticketData);
