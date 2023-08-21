@@ -67,6 +67,14 @@ app.post("/api/add_ticket", async (req, res) => {
 //Envia los tickets como un array que serán recibidos en la App.
 app.get('/api/get_ticket', async (req, res) => {
 
+  //YA TUVE LA MEJOR IDEA DE COMO FILTRAR!!!!
+  //LO QUE HAY QUE HACER ES USAR UN SOLO REF GET
+  //CON TODOS LOS WHERE NECESARIOS DEL PDF
+  //Y HACER UN OPERADOR TERNARIO PARA CADA FILTRO!
+  //POR EJEMPLO, SI where('categoria',==,categoria?categoria:true)
+  //DE ESTA MANERA SI ELIGEN UNA CATEGORIA FILTRA EN CATEGORIA
+  //Y SI NO ELIGIERON CATEGORIA PONGO UN TRUE Y RETORNO TODAS LAS CATEGORIAS
+
   // Access the provided query parameters
   let categoria = req.query.categoria;
 
