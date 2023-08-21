@@ -35,7 +35,8 @@ app.post("/api/add_ticket", async (req, res) => {
     fechaPublicacion: new Date(req.body.fechaPublicacion),
     fechaFinPublicacion: new Date(req.body.fechaFinPublicacion),
     valorCompra: parseFloat(req.body.valorCompra),
-    categoria: req.body.categoria
+    categoria: req.body.categoria,
+    fechaCreacion: new Date(Date.now).setSeconds(0,0)//it can also be done with seconds to be more accurate, but the exercise only requires the day, not the time
   })
 
   //respondemos a la solicitud
@@ -53,6 +54,19 @@ app.get('/api/get_ticket', async (req, res) => {
 
   // Access the provided query parameters
   let categoria = req.query.categoria;
+
+  let titulo = req.query.titulo;
+
+  console.log("imprimiendo query parameter titulo");
+  console.log(titulo);
+
+  // NO OLVIDES CONVERTIR EL PARAMETRO TITULO A .LOWERCASE PARA QUE BUSQUE BIEN
+
+  // categoria siempre va a existe, solo hay que checar que no este vacio o cosas por el estilo
+  //if (categoria) {
+  //  console.log("if de categoria funciona!");
+  //  console.log(categoria);
+  //}
 
   if ( categoria == 'undefined' || categoria == 'null' ) //if ( categoria ) also works
   {
