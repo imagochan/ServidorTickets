@@ -99,8 +99,8 @@ app.get('/api/get_ticket', async (req, res) => {
     var snapshot = await ticketCollectionRef.where('categoria','==',categoria).get();
   }
 
-  console.log("imprimiendo categoria para ver como llega sin el query parameter");
-  console.log(categoria);
+  //console.log("imprimiendo categoria para ver como llega sin el query parameter");
+  //console.log(categoria);
 
   console.log("La categoria recibida como query parameter en el request es:")
   console.log(categoria);
