@@ -19,12 +19,26 @@ var ticketData = [];
 //Iniciar el servidor en el puerto 2000 con la IP del equipo corriendo el servidor
 app.listen(2000, () => {
   console.log("Connected to server at 2000");
+  //let date_ob = new Date();
+  //var myVar = date_ob.toDateString(); 
+  //console.log(new Date(myVar));
+  //let fecha = new Date();
+  //var fecha_actual_sin_tiempo = tiempo_actual.setSeconds(0,0); 
+
+  //let fecha_y_tiempo = new Date();
+  //fecha_y_tiempo.setHours(0,0,0,0);
+  //console.log(fecha_y_tiempo);
 })
 
 //API para crear tickets y almacenarlos en firestore
 
 //recibe un json enviado desde la App de tickets y lo guarda en firestore
 app.post("/api/add_ticket", async (req, res) => {
+
+  //obtenemos solo la fecha de hoy
+  let fecha_y_tiempo = new Date();
+  fecha_y_tiempo.setHours(0,0,0,0);
+  //console.log(fecha_y_tiempo);
 
   //Añadimos un ticket a la colección de tickets en firestore
   const res2 = await ticketCollectionRef.add({
@@ -36,7 +50,8 @@ app.post("/api/add_ticket", async (req, res) => {
     fechaFinPublicacion: new Date(req.body.fechaFinPublicacion),
     valorCompra: parseFloat(req.body.valorCompra),
     categoria: req.body.categoria,
-    fechaCreacion: new Date(Date.now).setSeconds(0,0)//it can also be done with seconds to be more accurate, but the exercise only requires the day, not the time
+    //it can also be done with seconds to be more accurate, but the exercise only requires the day, not the time
+    fechaCreacion: fecha_y_tiempo
   })
 
   //respondemos a la solicitud
@@ -104,10 +119,12 @@ app.get('/api/get_ticket', async (req, res) => {
     const fechaVenc = doc.get('fechaVencimiento');
     const fechaPubli = doc.get('fechaPublicacion');
     const fechaFinPubli = doc.get('fechaFinPublicacion');
+    const fechaCrea = doc.get('fechaCreacion');
 
     var nuevafechavenc = fechaVenc.toDate();
     var nuevafechapubli = fechaPubli.toDate();
     var nuevafechafinpubli = fechaFinPubli.toDate();
+    var nuevafechacrea = fechaCrea.toDate();
 
     const tdata = {
       'id': doc.id,
@@ -118,7 +135,8 @@ app.get('/api/get_ticket', async (req, res) => {
       'fechaPublicacion': nuevafechapubli,
       'fechaFinPublicacion': nuevafechafinpubli,
       'valorCompra': doc.get('valorCompra'),
-      'categoria': doc.get('categoria')
+      'categoria': doc.get('categoria'),
+      'fechaCreacion':nuevafechacrea
     };
 
     ticketData.push(tdata);
