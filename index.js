@@ -77,6 +77,9 @@ app.get('/api/get_ticket', async (req, res) => {
   //ASI PODEMOS HACER UN SOLO GET REF DOCUMENTS
   //CON TODOS LOS WHERE NECESARIOS ENCADENADOS
 
+  //ALSO IMPRIMIR LA URL DEL API GET TICKET EN FLUTTER
+  //PARA VER COMO PASAN LOS DATOS CUANDO UN QUERY PARAMETER ESTA VACIO
+
   // Access the provided query parameters
   let categoria = req.query.categoria;
 
