@@ -74,6 +74,8 @@ app.get('/api/get_ticket', async (req, res) => {
   //POR EJEMPLO, SI where('categoria',==,categoria?categoria:true)
   //DE ESTA MANERA SI ELIGEN UNA CATEGORIA FILTRA EN CATEGORIA
   //Y SI NO ELIGIERON CATEGORIA PONGO UN TRUE Y RETORNO TODAS LAS CATEGORIAS
+  //ASI PODEMOS HACER UN SOLO GET REF DOCUMENTS
+  //CON TODOS LOS WHERE NECESARIOS ENCADENADOS
 
   // Access the provided query parameters
   let categoria = req.query.categoria;
