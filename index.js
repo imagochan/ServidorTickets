@@ -81,8 +81,13 @@ app.get('/api/get_ticket', async (req, res) => {
   //PARA VER COMO PASAN LOS DATOS CUANDO UN QUERY PARAMETER ESTA VACIO
 
   // Access the provided query parameters
+  let fechaCreacionStart = req.query.fechaCreacionStart
+  let fechaCreacionEnd = req.query.fechaCreacionEnd
+  let fechaPublicacionStart = req.query.fechaPublicacionStart
+  let fechaPublicacionEnd = req.query.fechaPublicacionEnd
   let categoria = req.query.categoria;
-
+  let valorCompraStart = req.query.valorCompraStart
+  let valorCompraEnd = req.query.valorCompraEnd
   let titulo = req.query.titulo;
 
   console.log("imprimiendo query parameter titulo");
@@ -90,38 +95,50 @@ app.get('/api/get_ticket', async (req, res) => {
 
   // NO OLVIDES CONVERTIR EL PARAMETRO TITULO A .LOWERCASE PARA QUE BUSQUE BIEN
 
-  // categoria siempre va a existe, solo hay que checar que no este vacio o cosas por el estilo
-  //if (categoria) {
-  //  console.log("if de categoria funciona!");
-  //  console.log(categoria);
-  //}
+  //Iniciando la variable que guarda la referencia
+  var filtrado = ticketCollectionRef
 
-  if ( categoria == 'undefined' || categoria == 'null' ) //if ( categoria ) also works
+  //Filtrando por categoria
+  if ( categoria == 'undefined' || categoria == 'null' )
   {
-    //do stuff if query is defined and not null
     console.log("categoria no esta definido o es nulo");
-
-    //Recibimos información de la colección de tickets con un snapshot
-    var snapshot = await ticketCollectionRef.get();
   }
   else
   {
     console.log("categoria es definido y no nulo");
-    //Recibimos información de la colección de tickets con un snapshot
-    //const snapshot = await ticketCollectionRef.get();
-    var snapshot = await ticketCollectionRef.where('categoria','==',categoria).get();
+    filtrado = filtrado.where('categoria','==',categoria);
   }
 
-  //console.log("imprimiendo categoria para ver como llega sin el query parameter");
-  //console.log(categoria);
+  //Filtrando por titulo
+  if ( titulo == 'undefined' || titulo == 'null' )
+  {
+    console.log("titulo no esta definido o es nulo");
+  }
+  else
+  {
+    console.log("titulo es definido y no nulo");
+    filtrado = filtrado.where('titulo','==',titulo);
+  }
 
-  console.log("La categoria recibida como query parameter en el request es:")
-  console.log(categoria);
-
-  //Recibimos información de la colección de tickets con un snapshot
+  //Filtrando por fecha de Creacion
   
-  //const snapshot = await ticketCollectionRef.get();
-  //const snapshot2 = await ticketCollectionRef.where('titulo','==','Barbie').get();
+  //hacer un chequeo del lado de la app que sea
+  //si el campo de fecha de creacion start tiene datos y el de fin no, tirar error validator form
+  //lo que si esta bien es que ambos campos de fechas creacion estem
+  //ambos llenos (filtrar por fechas) o ambos vacios (no filtrar por fechas)
+  if ( fechaCreacionStart == 'undefined' || fechaCreacionStart == 'null' || fechaCreacionEnd == 'undefined' || fechaCreacionEnd == 'null')
+  {
+    console.log("rango de fecha de creacion no esta definido o es nulo");
+  }
+  else
+  {
+    console.log("rango de fecha de creacion es definido y no nulo");
+    filtrado = filtrado.where('fechaCreacion','>=',fechaCreacionStart);
+    filtrado = filtrado.where('fechaCreacion','<=',fechaCreacionEnd);
+  }
+
+  //Hacemos get a la referencia de firestore
+  filtrado = await filtrado.get();
 
   //limpiamos el array de tickets a enviar 
   ticketData = [];
