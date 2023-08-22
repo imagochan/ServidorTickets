@@ -99,7 +99,7 @@ app.get('/api/get_ticket', async (req, res) => {
   //Filtrando por categoria
   if ( categoria == 'ALL' )
   {
-    console.log("categoria no esta definido o es nulo");
+    console.log("categoria no fue especificada");
   }
   else
   {
@@ -180,6 +180,8 @@ app.get('/api/get_ticket', async (req, res) => {
     var nuevafechafinpubli = fechaFinPubli.toDate();
     var nuevafechacrea = fechaCrea.toDate();
 
+    var valorCompra = doc.get('valorCompra');
+
     const tdata = {
       'id': doc.id,
       'titulo': doc.get('titulo'),
@@ -188,13 +190,17 @@ app.get('/api/get_ticket', async (req, res) => {
       'fechaVencimiento': nuevafechavenc,
       'fechaPublicacion': nuevafechapubli,
       'fechaFinPublicacion': nuevafechafinpubli,
-      'valorCompra': doc.get('valorCompra'),
+      'valorCompra': valorCompra,
       'categoria': doc.get('categoria'),
       'fechaCreacion':nuevafechacrea
     };
 
-    ticketData.push(tdata);
-
+    if ( valorCompraEnd == 0 || valorCompraStart == 0) {
+      ticketData.push(tdata);  
+    }
+    else if(valorCompra >= valorCompraStart && valorCompra <= valorCompraEnd ) {
+      ticketData.push(tdata);
+    }
   })
 
   // imprimir la lista de tickets
