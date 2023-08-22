@@ -97,7 +97,7 @@ app.get('/api/get_ticket', async (req, res) => {
   var filtrado = ticketCollectionRef
 
   //Filtrando por categoria
-  if ( categoria == 'undefined' || categoria == 'null' )
+  if ( categoria == 'ALL' )
   {
     console.log("categoria no esta definido o es nulo");
   }
@@ -108,15 +108,15 @@ app.get('/api/get_ticket', async (req, res) => {
   }
 
   //Filtrando por titulo
-  if ( titulo == 'undefined' || titulo == 'null' )
-  {
-    console.log("titulo no esta definido o es nulo");
-  }
-  else
-  {
-    console.log("titulo es definido y no nulo");
-    filtrado = filtrado.where('titulo','==',titulo);
-  }
+  // if ( titulo == 'undefined' || titulo == 'null' )
+  // {
+  //   console.log("titulo no esta definido o es nulo");
+  // }
+  // else
+  // {
+  //   console.log("titulo es definido y no nulo");
+  //   filtrado = filtrado.where('titulo','==',titulo);
+  // }
 
   //Filtrando por fecha de Creacion
   
@@ -131,8 +131,9 @@ app.get('/api/get_ticket', async (req, res) => {
   else
   {
     console.log("rango de fecha de creacion es definido y no nulo");
+    filtrado = filtrado.orderBy('fechaCreacion');
     filtrado = filtrado.where('fechaCreacion','>=',fechaCreacionStart);
-    filtrado = filtrado.where('fechaCreacion','<=',fechaCreacionEnd);
+    // filtrado = filtrado.where('fechaCreacion','<=',fechaCreacionEnd);
   }
 
   //Filtrando por fecha de Publicacion
@@ -142,22 +143,23 @@ app.get('/api/get_ticket', async (req, res) => {
   }
   else
   {
-    console.log("rango de fecha de publicacion es definido y no nulo");
-    filtrado = filtrado.where('fechaPublicacion','>=',fechaPublicacionStart);
-    filtrado = filtrado.where('fechaFinPublicacion','<=',fechaPublicacionEnd);
+    // console.log("rango de fecha de publicacion es definido y no nulo");
+    // filtrado = filtrado.where('fechaPublicacion','>=',fechaPublicacionStart);
+    // filtrado = filtrado.where('fechaFinPublicacion','<=',fechaPublicacionEnd);
   }
 
   //Filtrando por valor de compra
-  if ( valorCompraStart == 'undefined' || valorCompraStart == 'null' || valorCompraEnd == 'undefined' || valorCompraEnd == 'null')
-  {
-    console.log("rango de valor de compra no esta definido o es nulo");
-  }
-  else
-  {
-    console.log("rango de valor de compra es definido y no nulo");
-    filtrado = filtrado.where('valorCompra','>=',valorCompraStart);
-    filtrado = filtrado.where('valorCompra','<=',valorCompraEnd);
-  }
+  // if ( valorCompraStart == 0 || valorCompraEnd == 0)
+  // {
+  //   console.log("rango de valor de compra no esta definido o es nulo");
+  // }
+  // else
+  // {
+    // console.log("rango de valor de compra es definido y no nulo");
+    // filtrado = filtrado.orderBy('valorCompra');
+    // filtrado = filtrado.where('valorCompra','>=',valorCompraStart);
+    // filtrado = filtrado.where('valorCompra','<=',valorCompraEnd);
+  // }
 
   //Hacemos get a la referencia de firestore
   var snapshot = await filtrado.get();
