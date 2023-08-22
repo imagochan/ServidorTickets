@@ -137,6 +137,30 @@ app.get('/api/get_ticket', async (req, res) => {
     filtrado = filtrado.where('fechaCreacion','<=',fechaCreacionEnd);
   }
 
+  //Filtrando por fecha de Publicacion
+  if ( fechaPublicacionStart == 'undefined' || fechaPublicacionStart == 'null' || fechaPublicacionEnd == 'undefined' || fechaPublicacionEnd == 'null')
+  {
+    console.log("rango de fecha de publicacion no esta definido o es nulo");
+  }
+  else
+  {
+    console.log("rango de fecha de publicacion es definido y no nulo");
+    filtrado = filtrado.where('fechaPublicacion','>=',fechaPublicacionStart);
+    filtrado = filtrado.where('fechaFinPublicacion','<=',fechaPublicacionEnd);
+  }
+
+  //Filtrando por valor de compra
+  if ( valorCompraStart == 'undefined' || valorCompraStart == 'null' || valorCompraEnd == 'undefined' || valorCompraEnd == 'null')
+  {
+    console.log("rango de valor de compra no esta definido o es nulo");
+  }
+  else
+  {
+    console.log("rango de valor de compra es definido y no nulo");
+    filtrado = filtrado.where('valorCompra','>=',valorCompraStart);
+    filtrado = filtrado.where('valorCompra','<=',valorCompraEnd);
+  }
+
   //Hacemos get a la referencia de firestore
   filtrado = await filtrado.get();
 
