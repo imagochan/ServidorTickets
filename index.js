@@ -66,6 +66,7 @@ app.post("/api/add_ticket", async (req, res) => {
 //Recolecta los tickets en la colección de tickets en firestore
 //Envia los tickets como un array que serán recibidos en la App.
 app.get('/api/get_ticket', async (req, res) => {
+  console.log("--------------Se ejecuto la llamada get-----------")
 
   //YA TUVE LA MEJOR IDEA DE COMO FILTRAR!!!!
   //LO QUE HAY QUE HACER ES USAR UN SOLO REF GET
@@ -89,9 +90,6 @@ app.get('/api/get_ticket', async (req, res) => {
   let valorCompraStart = req.query.valorCompraStart
   let valorCompraEnd = req.query.valorCompraEnd
   let titulo = req.query.titulo;
-
-  console.log("imprimiendo query parameter titulo");
-  console.log(titulo);
 
   // NO OLVIDES CONVERTIR EL PARAMETRO TITULO A .LOWERCASE PARA QUE BUSQUE BIEN
 
@@ -162,7 +160,7 @@ app.get('/api/get_ticket', async (req, res) => {
   }
 
   //Hacemos get a la referencia de firestore
-  filtrado = await filtrado.get();
+  var snapshot = await filtrado.get();
 
   //limpiamos el array de tickets a enviar 
   ticketData = [];
