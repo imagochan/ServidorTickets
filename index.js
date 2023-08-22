@@ -132,8 +132,8 @@ app.get('/api/get_ticket', async (req, res) => {
   {
     console.log("rango de fecha de creacion es definido y no nulo");
     filtrado = filtrado.orderBy('fechaCreacion');
-    filtrado = filtrado.where('fechaCreacion','>=',fechaCreacionStart);
-    // filtrado = filtrado.where('fechaCreacion','<=',fechaCreacionEnd);
+    filtrado = filtrado.where('fechaCreacion','>=',new Date(fechaCreacionStart));
+    filtrado = filtrado.where('fechaCreacion','<=',new Date(fechaCreacionEnd));
   }
 
   //Filtrando por fecha de Publicacion
