@@ -37,7 +37,6 @@ app.post("/api/add_ticket", async (req, res) => {
     descripcion: req.body.descripcion,
     fechaVencimiento: new Date(req.body.fechaVencimiento),
     fechaPublicacion: new Date(req.body.fechaPublicacion),
-    fechaFinPublicacion: new Date(req.body.fechaFinPublicacion),
     valorCompra: parseFloat(req.body.valorCompra),
     categoria: req.body.categoria,
     //it can also be done with seconds to be more accurate, but the exercise only requires the day, not the time
@@ -121,12 +120,10 @@ app.get('/api/get_ticket', async (req, res) => {
     // { timestamp: time 2323 seconds 2323 }
     const fechaVenc = doc.get('fechaVencimiento');
     const fechaPubli = doc.get('fechaPublicacion');
-    const fechaFinPubli = doc.get('fechaFinPublicacion');
     const fechaCrea = doc.get('fechaCreacion');
 
     var nuevafechavenc = fechaVenc.toDate();
     var nuevafechapubli = fechaPubli.toDate();
-    var nuevafechafinpubli = fechaFinPubli.toDate();
     var nuevafechacrea = fechaCrea.toDate();
 
     var valorCompra = doc.get('valorCompra');
@@ -138,7 +135,6 @@ app.get('/api/get_ticket', async (req, res) => {
       //'fechaVencimiento': doc.get('fechaVencimiento'),
       'fechaVencimiento': nuevafechavenc,
       'fechaPublicacion': nuevafechapubli,
-      'fechaFinPublicacion': nuevafechafinpubli,
       'valorCompra': valorCompra,
       'categoria': doc.get('categoria'),
       'fechaCreacion':nuevafechacrea
@@ -208,12 +204,13 @@ app.post("/api/update_ticket/:id", async (req, res) => {
   const ticketDocumentRef = db.collection('tickets').doc(req.params.id) 
 
   //actualizamos los datos del ticket actual
+
+  //OJO FALTA AGREGAR LOS NUEVOS CAMPOS QUE HAN SURGIDO!!
   const res2 = await ticketDocumentRef.set({
     titulo:req.body.titulo,
     descripcion:req.body.descripcion,
     fechaVencimiento:req.body.fechaVencimiento,
     fechaPublicacion:req.body.fechaPublicacion,
-    fechaFinPublicacion:req.body.fechaFinPublicacion,
     valorCompra:parseFloat(req.body.valorCompra),
     categoria:req.body.categoria,
   })
