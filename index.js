@@ -19,15 +19,6 @@ var ticketData = [];
 //Iniciar el servidor en el puerto 2000 con la IP del equipo corriendo el servidor
 app.listen(2000, () => {
   console.log("Connected to server at 2000");
-  //let date_ob = new Date();
-  //var myVar = date_ob.toDateString(); 
-  //console.log(new Date(myVar));
-  //let fecha = new Date();
-  //var fecha_actual_sin_tiempo = tiempo_actual.setSeconds(0,0); 
-
-  //let fecha_y_tiempo = new Date();
-  //fecha_y_tiempo.setHours(0,0,0,0);
-  //console.log(fecha_y_tiempo);
 })
 
 //API para crear tickets y almacenarlos en firestore
@@ -38,13 +29,11 @@ app.post("/api/add_ticket", async (req, res) => {
   //obtenemos solo la fecha de hoy
   let fecha_y_tiempo = new Date();
   fecha_y_tiempo.setHours(0,0,0,0);
-  //console.log(fecha_y_tiempo);
 
   //Añadimos un ticket a la colección de tickets en firestore
   const res2 = await ticketCollectionRef.add({
     titulo: req.body.titulo,
     descripcion: req.body.descripcion,
-    //new Date() instead of Date.parse
     fechaVencimiento: new Date(req.body.fechaVencimiento),
     fechaPublicacion: new Date(req.body.fechaPublicacion),
     fechaFinPublicacion: new Date(req.body.fechaFinPublicacion),
@@ -68,19 +57,6 @@ app.post("/api/add_ticket", async (req, res) => {
 app.get('/api/get_ticket', async (req, res) => {
   console.log("--------------Se ejecuto la llamada get-----------")
 
-  //YA TUVE LA MEJOR IDEA DE COMO FILTRAR!!!!
-  //LO QUE HAY QUE HACER ES USAR UN SOLO REF GET
-  //CON TODOS LOS WHERE NECESARIOS DEL PDF
-  //Y HACER UN OPERADOR TERNARIO PARA CADA FILTRO!
-  //POR EJEMPLO, SI where('categoria',==,categoria?categoria:true)
-  //DE ESTA MANERA SI ELIGEN UNA CATEGORIA FILTRA EN CATEGORIA
-  //Y SI NO ELIGIERON CATEGORIA PONGO UN TRUE Y RETORNO TODAS LAS CATEGORIAS
-  //ASI PODEMOS HACER UN SOLO GET REF DOCUMENTS
-  //CON TODOS LOS WHERE NECESARIOS ENCADENADOS
-
-  //ALSO IMPRIMIR LA URL DEL API GET TICKET EN FLUTTER
-  //PARA VER COMO PASAN LOS DATOS CUANDO UN QUERY PARAMETER ESTA VACIO
-
   // Access the provided query parameters
   let fechaCreacionStart = req.query.fechaCreacionStart
   let fechaCreacionEnd = req.query.fechaCreacionEnd
@@ -90,6 +66,9 @@ app.get('/api/get_ticket', async (req, res) => {
   let valorCompraStart = req.query.valorCompraStart
   let valorCompraEnd = req.query.valorCompraEnd
   let titulo = req.query.titulo;
+  let esFechaCreacionOPublicidad = req.query.esFechaCreacionOPublicidad;
+
+  console.log("esFechaCreacionOPublicidad",esFechaCreacionOPublicidad);
 
   // NO OLVIDES CONVERTIR EL PARAMETRO TITULO A .LOWERCASE PARA QUE BUSQUE BIEN
 
@@ -107,59 +86,28 @@ app.get('/api/get_ticket', async (req, res) => {
     filtrado = filtrado.where('categoria','==',categoria);
   }
 
-  //Filtrando por titulo
-  // if ( titulo == 'undefined' || titulo == 'null' )
-  // {
-  //   console.log("titulo no esta definido o es nulo");
-  // }
-  // else
-  // {
-  //   console.log("titulo es definido y no nulo");
-  //   filtrado = filtrado.where('titulo','==',titulo);
-  // }
-
   //Filtrando por fecha de Creacion
   
   //hacer un chequeo del lado de la app que sea
   //si el campo de fecha de creacion start tiene datos y el de fin no, tirar error validator form
   //lo que si esta bien es que ambos campos de fechas creacion estem
   //ambos llenos (filtrar por fechas) o ambos vacios (no filtrar por fechas)
-  if ( fechaCreacionStart == 'undefined' || fechaCreacionStart == 'null' || fechaCreacionEnd == 'undefined' || fechaCreacionEnd == 'null')
+
+  if (esFechaCreacionOPublicidad == 'true')
   {
-    console.log("rango de fecha de creacion no esta definido o es nulo");
-  }
-  else
-  {
-    console.log("rango de fecha de creacion es definido y no nulo");
+    console.log("se filtrara por fecha de creacion");
     filtrado = filtrado.orderBy('fechaCreacion');
     filtrado = filtrado.where('fechaCreacion','>=',new Date(fechaCreacionStart));
     filtrado = filtrado.where('fechaCreacion','<=',new Date(fechaCreacionEnd));
   }
-
-  //Filtrando por fecha de Publicacion
-  if ( fechaPublicacionStart == 'undefined' || fechaPublicacionStart == 'null' || fechaPublicacionEnd == 'undefined' || fechaPublicacionEnd == 'null')
-  {
-    console.log("rango de fecha de publicacion no esta definido o es nulo");
+  else {
+    console.log("se filtrara por fecha de publicacion");
+    filtrado = filtrado.orderBy('fechaPublicacion');
+    filtrado = filtrado.where('fechaPublicacion','>=',new Date(fechaPublicacionStart));
+    //No puedo filtrar por fecha de fin de publicacion junto con la inicial
+    //una idea es hacer un tercer radio button para solucionar esto
+    filtrado = filtrado.where('fechaPublicacion','<=',new Date(fechaPublicacionEnd));
   }
-  else
-  {
-    // console.log("rango de fecha de publicacion es definido y no nulo");
-    // filtrado = filtrado.where('fechaPublicacion','>=',fechaPublicacionStart);
-    // filtrado = filtrado.where('fechaFinPublicacion','<=',fechaPublicacionEnd);
-  }
-
-  //Filtrando por valor de compra
-  // if ( valorCompraStart == 0 || valorCompraEnd == 0)
-  // {
-  //   console.log("rango de valor de compra no esta definido o es nulo");
-  // }
-  // else
-  // {
-    // console.log("rango de valor de compra es definido y no nulo");
-    // filtrado = filtrado.orderBy('valorCompra');
-    // filtrado = filtrado.where('valorCompra','>=',valorCompraStart);
-    // filtrado = filtrado.where('valorCompra','<=',valorCompraEnd);
-  // }
 
   //Hacemos get a la referencia de firestore
   var snapshot = await filtrado.get();
@@ -195,16 +143,43 @@ app.get('/api/get_ticket', async (req, res) => {
       'fechaCreacion':nuevafechacrea
     };
 
-    if ( valorCompraEnd == 0 || valorCompraStart == 0) {
-      ticketData.push(tdata);  
-    }
-    else if(valorCompra >= valorCompraStart && valorCompra <= valorCompraEnd ) {
-      ticketData.push(tdata);
-    }
+    //recogemos todo y filtramos despues
+    ticketData.push(tdata)
+
+    //validar del lado de la app que el rango de valor de compra sea mayor que 0
+    //tambien que el rango de valor de compra Start sea menor que el End
+
+    // if ( valorCompraEnd == 0 || valorCompraStart == 0) {
+    //   ticketData.push(tdata);  
+    // }
+    // else if(valorCompra >= valorCompraStart && valorCompra <= valorCompraEnd ) {
+    //   ticketData.push(tdata);
+    // }
+    
+    //ticketData.filter
+    //leer la documentacion de .filter para filtrar valor de compra y titulo a buscar
+
   })
 
-  // imprimir la lista de tickets
-  //console.log(ticketData);
+  console.log("imprimiendo lista de tickets FILTRADA----------------")
+  //ticketData.forEach
+
+  if (valorCompraEnd != 0 || valorCompraStart != 0) {
+    ticketData = ticketData.filter(function(value){
+      return value.valorCompra > valorCompraStart && value.valorCompra < valorCompraEnd;
+    })
+  }
+
+  if (titulo != '') {
+    ticketData = ticketData.filter(function(value){
+      const elemento = value.titulo.toLowerCase();
+      return elemento.includes(titulo.toLowerCase());
+    })
+  }
+
+  console.log("imprimiendo lista de tickets----------------")
+  //imprimir la lista de tickets
+  console.log(ticketData);
 
   //Si no hay documentos/filas devolvemos un array vacío
   if (snapshot.empty) {
