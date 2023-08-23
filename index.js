@@ -25,6 +25,7 @@ app.listen(2000, () => {
 
 //recibe un json enviado desde la App de tickets y lo guarda en firestore
 app.post("/api/add_ticket", async (req, res) => {
+  console.log("--------------Se ejecuto crear ticket-----------")
 
   //obtenemos solo la fecha de hoy
   let fecha_y_tiempo = new Date();
