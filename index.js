@@ -206,14 +206,17 @@ app.post("/api/update_ticket/:id", async (req, res) => {
   //actualizamos los datos del ticket actual
 
   //OJO FALTA AGREGAR LOS NUEVOS CAMPOS QUE HAN SURGIDO!!
-  const res2 = await ticketDocumentRef.set({
+  const res2 = await ticketDocumentRef.update(
+    {
     titulo:req.body.titulo,
     descripcion:req.body.descripcion,
-    fechaVencimiento:req.body.fechaVencimiento,
-    fechaPublicacion:req.body.fechaPublicacion,
+    fechaVencimiento:new Date(req.body.fechaVencimiento),
+    fechaPublicacion:new Date(req.body.fechaPublicacion),
     valorCompra:parseFloat(req.body.valorCompra),
     categoria:req.body.categoria,
-  })
+    }
+    //, SetOptions(merge,true) usamos update en vez de set en node.js 
+  );
 
   //respondemos a la solicitud
   res.status(200).send({
