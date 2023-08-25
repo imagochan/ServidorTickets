@@ -302,3 +302,17 @@ app.get('/api/get_categorias', async (req, res) => {
     });
   }
 })
+
+//API para borrar una categoria almacenada en firestore
+app.post("/api/borrar_categoria/:id", async (req, res) => {
+
+  //obtenemos una referencia al ticket e invocamos la función de borrado
+  await categoriasCollectionRef.doc(req.params.id).delete();
+  //const categoriasCollectionRef = db.collection('categoria').doc(req.params.id).delete();
+
+  //respondemos a la solicitud
+  res.status(200).send({
+    'status': "success",
+    'message': "Categoria deleted"
+  })
+})
