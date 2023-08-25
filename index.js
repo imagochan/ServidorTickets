@@ -19,6 +19,9 @@ app.use(express.urlencoded({
 //Array para preparar datos a enviar en json
 var ticketData = [];
 
+//Array de categorias para preparar datos a enviar en json
+var listaCategorias = [];
+
 //Iniciar el servidor en el puerto 2000 con la IP del equipo corriendo el servidor
 app.listen(2000, () => {
   console.log("Connected to server at 2000");
@@ -130,7 +133,7 @@ app.get('/api/get_ticket', async (req, res) => {
     var valorCompra = doc.get('valorCompra');
 
     const tdata = {
-      'id': doc.id,
+      'id': doc.id,//este es el id de firestore
       'titulo': doc.get('titulo'),
       'descripcion': doc.get('descripcion'),
       //'fechaVencimiento': doc.get('fechaVencimiento'),
@@ -256,4 +259,49 @@ app.post("/api/crear_categoria", async (req, res) => {
     "status_code": 200,
     "message": "Categoria added succesfully",
   });
+})
+
+//API para listar categorias existentes almacenadas en firestore
+app.get('/api/get_categorias', async (req, res) => {
+
+  console.log("--------------Se ejecuto la llamada getCategorias-----------")
+
+  //console.log("esFechaCreacionOPublicidad",esFechaCreacionOPublicidad);
+
+  var snapshot = categoriasCollectionRef.get()
+
+  //limpiamos el array de tickets a enviar 
+  listaCategorias = []
+
+  //llenamos el array con los tickets existentes en firestore
+  snapshot.forEach(doc => {
+    const categoriaData = {
+      'id': doc.id, //este es el id de firestore
+      'categoriaNombre': doc.get('categoriaNombre')
+    };
+
+    //recogemos todo y filtramos despues
+    listaCategorias.push(categoriaData);
+  })
+
+
+  console.log("imprimiendo lista de categorias----------------")
+  //imprimir la lista de categorias
+  console.log(listaCategorias);
+
+  //Si no hay documentos/filas devolvemos un array vacío
+  if (snapshot.empty) {
+    console.log('No matching documents');
+    res.status(200).send({
+      'status_code': 200,
+      'categorias': []
+    });
+    return;
+  //Caso contrario enviamos el array de categorias a la App
+  } else {
+    res.status(200).send({
+      'status_code': 200,
+      'categorias': listaCategorias
+    });
+  }
 })
