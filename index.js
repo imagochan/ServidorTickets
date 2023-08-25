@@ -5,8 +5,11 @@ const app = express();
 //importar firebase/firestore
 const { db } = require('./firebase.js');
 
-//referencia a "tabla" de tickets en firestore
+//referencia a la "tabla" de tickets en firestore
 const ticketCollectionRef = db.collection('tickets');
+
+//referencia a la "tabla" de categorias en firestore
+const categoriasCollectionRef = db.collection('categorias');
 
 app.use(express.json());
 app.use(express.urlencoded({
@@ -22,7 +25,6 @@ app.listen(2000, () => {
 })
 
 //API para crear tickets y almacenarlos en firestore
-
 //recibe un json enviado desde la App de tickets y lo guarda en firestore
 app.post("/api/add_ticket", async (req, res) => {
   console.log("--------------Se ejecuto crear ticket-----------")
@@ -51,7 +53,6 @@ app.post("/api/add_ticket", async (req, res) => {
 })
 
 //API para listar tickets existentes almacenados en firestore
-
 //Recolecta los tickets en la colección de tickets en firestore
 //Envia los tickets como un array que serán recibidos en la App.
 app.get('/api/get_ticket', async (req, res) => {
@@ -195,8 +196,7 @@ app.get('/api/get_ticket', async (req, res) => {
   }
 })
 
-//APi para actualizar un ticket de la lista de tickets en firestore
-
+//API para actualizar un ticket de la lista de tickets en firestore
 //Recibimos un ticket desde la App 
 //para reemplazar la información del ticket existente a partir de su id
 app.post("/api/update_ticket/:id", async (req, res) => {
@@ -226,7 +226,6 @@ app.post("/api/update_ticket/:id", async (req, res) => {
 })
 
 //API para borrar un ticket almacenado en firestore
-
 //Recibimos el id del ticket a borrar y
 //procedemos a borrar dicho ticket en firestore
 app.post("/api/delete_ticket/:id", async (req, res) => {
@@ -239,4 +238,20 @@ app.post("/api/delete_ticket/:id", async (req, res) => {
     'status': "success",
     'message': "Ticket deleted"
   })
+})
+
+//API para crear una categoria
+app.post("/api/crear_categoria", async (req, res) => {
+  console.log("--------------Se ejecuto crear categoria-----------")
+
+  //Añadimos una categoria a la colección de categorias en firestore
+  const res = await categoriasCollectionRef.add({
+    categoria: req.body.categoria,
+  })
+
+  //respondemos a la solicitud
+  res.status(200).send({
+    "status_code": 200,
+    "message": "Categoria added succesfully",
+  });
 })
