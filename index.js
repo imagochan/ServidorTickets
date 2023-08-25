@@ -244,9 +244,11 @@ app.post("/api/delete_ticket/:id", async (req, res) => {
 app.post("/api/crear_categoria", async (req, res) => {
   console.log("--------------Se ejecuto crear categoria-----------")
 
+  console.log(req.body.categoriaNombre)
+
   //Añadimos una categoria a la colección de categorias en firestore
-  const res = await categoriasCollectionRef.add({
-    categoria: req.body.categoria,
+  const res2 = await categoriasCollectionRef.add({
+    categoria: req.body.categoriaNombre,
   })
 
   //respondemos a la solicitud
