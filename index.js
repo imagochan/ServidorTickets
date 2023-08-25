@@ -162,9 +162,6 @@ app.get('/api/get_ticket', async (req, res) => {
 
   })
 
-  console.log("imprimiendo lista de tickets FILTRADA----------------")
-  //ticketData.forEach
-
   if (valorCompraEnd != 0 || valorCompraStart != 0) {
     ticketData = ticketData.filter(function(value){
       return value.valorCompra > valorCompraStart && value.valorCompra < valorCompraEnd;
@@ -268,7 +265,7 @@ app.get('/api/get_categorias', async (req, res) => {
 
   //console.log("esFechaCreacionOPublicidad",esFechaCreacionOPublicidad);
 
-  var snapshot = categoriasCollectionRef.get()
+  var snapshot = await categoriasCollectionRef.get()
 
   //limpiamos el array de tickets a enviar 
   listaCategorias = []
@@ -277,7 +274,7 @@ app.get('/api/get_categorias', async (req, res) => {
   snapshot.forEach(doc => {
     const categoriaData = {
       'id': doc.id, //este es el id de firestore
-      'categoriaNombre': doc.get('categoriaNombre')
+      'categoriaNombre': doc.get('categoria')
     };
 
     //recogemos todo y filtramos despues
