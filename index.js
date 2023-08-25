@@ -308,11 +308,30 @@ app.post("/api/borrar_categoria/:id", async (req, res) => {
 
   //obtenemos una referencia al ticket e invocamos la función de borrado
   await categoriasCollectionRef.doc(req.params.id).delete();
-  //const categoriasCollectionRef = db.collection('categoria').doc(req.params.id).delete();
 
   //respondemos a la solicitud
   res.status(200).send({
     'status': "success",
     'message': "Categoria deleted"
+  })
+})
+
+//API para actualizar una categoria de la colección de categorias en firestore
+app.post("/api/actualizar_categoria/:id", async (req, res) => {
+  //obtenemos una referencia al ticket usando el id recibido desde la App
+
+  await categoriasCollectionRef.doc(req.params.id);
+
+  //actualizamos los datos de la categoría actual
+  const res2 = await categoriasCollectionRef.update(//, SetOptions(merge,true) usamos update en vez de set en node.js 
+    {
+      categoria:req.body.categoria
+    }
+  );
+
+  //respondemos a la solicitud
+  res.status(200).send({
+    'status': "success",
+    'message': "categoria updated"
   })
 })
