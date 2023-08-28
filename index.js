@@ -43,7 +43,7 @@ app.post("/api/add_ticket", async (req, res) => {
     fechaVencimiento: new Date(req.body.fechaVencimiento),
     fechaPublicacion: new Date(req.body.fechaPublicacion),
     valorCompra: parseFloat(req.body.valorCompra),
-    categoria: req.body.categoria,
+    categoriaID: req.body.categoriaID,
     //it can also be done with seconds to be more accurate, but the exercise only requires the day, not the time
     fechaCreacion: fecha_y_tiempo
   })
@@ -59,6 +59,7 @@ app.post("/api/add_ticket", async (req, res) => {
 //Recolecta los tickets en la colección de tickets en firestore
 //Envia los tickets como un array que serán recibidos en la App.
 app.get('/api/get_ticket', async (req, res) => {
+
   console.log("--------------Se ejecuto la llamada get-----------")
 
   // Access the provided query parameters
@@ -66,7 +67,7 @@ app.get('/api/get_ticket', async (req, res) => {
   let fechaCreacionEnd = req.query.fechaCreacionEnd
   let fechaPublicacionStart = req.query.fechaPublicacionStart
   let fechaPublicacionEnd = req.query.fechaPublicacionEnd
-  let categoria = req.query.categoria;
+  let categoriaID = req.query.categoriaID;
   let valorCompraStart = req.query.valorCompraStart
   let valorCompraEnd = req.query.valorCompraEnd
   let titulo = req.query.titulo;
@@ -80,14 +81,14 @@ app.get('/api/get_ticket', async (req, res) => {
   var filtrado = ticketCollectionRef
 
   //Filtrando por categoria
-  if ( categoria == 'ALL' )
+  if ( categoriaID == '' )
   {
     console.log("categoria no fue especificada");
   }
   else
   {
     console.log("categoria es definido y no nulo");
-    filtrado = filtrado.where('categoria','==',categoria);
+    filtrado = filtrado.where('categoriaID','==',categoriaID);
   }
 
   //Filtrando por fecha de Creacion
@@ -132,6 +133,8 @@ app.get('/api/get_ticket', async (req, res) => {
 
     var valorCompra = doc.get('valorCompra');
 
+    var categoriaID = doc.get('categoriaID');
+
     const tdata = {
       'id': doc.id,//este es el id de firestore
       'titulo': doc.get('titulo'),
@@ -140,7 +143,7 @@ app.get('/api/get_ticket', async (req, res) => {
       'fechaVencimiento': nuevafechavenc,
       'fechaPublicacion': nuevafechapubli,
       'valorCompra': valorCompra,
-      'categoria': doc.get('categoria'),
+      'categoriaID': categoriaID,
       'fechaCreacion':nuevafechacrea
     };
 
