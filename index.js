@@ -67,6 +67,7 @@ app.post("/api/add_ticket", async (req, res) => {
     fechaVencimiento: new Date(req.body.fechaVencimiento),
     fechaPublicacion: new Date(req.body.fechaPublicacion),
     valorCompra: parseFloat(req.body.valorCompra),
+    categoriaID: req.body.categoriaID,
     //categoria: req.body.categoria,
     categoriaRef: categoriasCollectionRef.doc(req.body.categoriaID),
     //it can also be done with seconds to be more accurate, but the exercise only requires the day, not the time
@@ -86,6 +87,7 @@ app.post("/api/add_ticket", async (req, res) => {
 //Recolecta los tickets en la colección de tickets en firestore
 //Envia los tickets como un array que serán recibidos en la App.
 app.get('/api/get_ticket', async (req, res) => {
+
   console.log("--------------Se ejecuto la llamada get-----------")
 
   // Access the provided query parameters
@@ -107,6 +109,7 @@ app.get('/api/get_ticket', async (req, res) => {
   var filtrado = ticketCollectionRef
 
   //Filtrando por categoria
+  if ( categoriaID == '' )
   if ( categoriaID == '' )
   {
     console.log("categoria id no fue especificada");
