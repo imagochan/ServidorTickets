@@ -32,9 +32,33 @@ app.listen(2000, () => {
 app.post("/api/add_ticket", async (req, res) => {
   console.log("--------------Se ejecuto crear ticket-----------")
 
+  // var snapshotCategorias = await categoriasCollectionRef.get()
+
+  // //limpiamos el array de tickets a enviar 
+  // listaCategorias = []
+
+  // //llenamos el array con los tickets existentes en firestore
+  // snapshotCategorias.forEach(doc => {
+  //   const categoriaData = {
+  //     'id': doc.id, //este es el id de firestore
+  //     'categoriaNombre': doc.get('categoria')
+  //   };
+
+  //   //recogemos todo y filtramos despues
+  //   listaCategorias.push(categoriaData);
+  // })
+
+  // //OJO
+  // ticketData = ticketData.filter(function(value){
+  //   return value.valorCompra > valorCompraStart && value.valorCompra < valorCompraEnd;
+  // })
+
   //obtenemos solo la fecha de hoy
   let fecha_y_tiempo = new Date();
   fecha_y_tiempo.setHours(0,0,0,0);
+
+  console.log("imprimiendo el body categorias");
+  console.log(req.body.categoriaID)
 
   //Añadimos un ticket a la colección de tickets en firestore
   const res2 = await ticketCollectionRef.add({
@@ -43,10 +67,13 @@ app.post("/api/add_ticket", async (req, res) => {
     fechaVencimiento: new Date(req.body.fechaVencimiento),
     fechaPublicacion: new Date(req.body.fechaPublicacion),
     valorCompra: parseFloat(req.body.valorCompra),
-    categoria: req.body.categoria,
+    //categoria: req.body.categoria,
+    categoriaRef: categoriasCollectionRef.doc(req.body.categoriaID),
     //it can also be done with seconds to be more accurate, but the exercise only requires the day, not the time
     fechaCreacion: fecha_y_tiempo
   })
+
+  //console.log(categoriasCollectionRef.doc(req.body.categoriaID));
 
   //respondemos a la solicitud
   res.status(200).send({
@@ -66,7 +93,7 @@ app.get('/api/get_ticket', async (req, res) => {
   let fechaCreacionEnd = req.query.fechaCreacionEnd
   let fechaPublicacionStart = req.query.fechaPublicacionStart
   let fechaPublicacionEnd = req.query.fechaPublicacionEnd
-  let categoria = req.query.categoria;
+  let categoriaID = req.query.categoriaID;
   let valorCompraStart = req.query.valorCompraStart
   let valorCompraEnd = req.query.valorCompraEnd
   let titulo = req.query.titulo;
@@ -80,14 +107,14 @@ app.get('/api/get_ticket', async (req, res) => {
   var filtrado = ticketCollectionRef
 
   //Filtrando por categoria
-  if ( categoria == 'ALL' )
+  if ( categoriaID == '' )
   {
-    console.log("categoria no fue especificada");
+    console.log("categoria id no fue especificada");
   }
   else
   {
-    console.log("categoria es definido y no nulo");
-    filtrado = filtrado.where('categoria','==',categoria);
+    console.log("categoria id es definido y no nulo");
+    filtrado = filtrado.where('categoriaID','==',categoriaID);
   }
 
   //Filtrando por fecha de Creacion
@@ -116,11 +143,17 @@ app.get('/api/get_ticket', async (req, res) => {
   //Hacemos get a la referencia de firestore
   var snapshot = await filtrado.get();
 
+  //lista de categorias lista = [] poblada
+
   //limpiamos el array de tickets a enviar 
   ticketData = [];
 
   //llenamos el array con los tickets existentes en firestore
-  snapshot.forEach(doc => {
+  snapshot.forEach(async doc => {
+    //const unTicket = doc.data();
+
+    //unTicket.c
+
     // { timestamp: time 2323 seconds 2323 }
     const fechaVenc = doc.get('fechaVencimiento');
     const fechaPubli = doc.get('fechaPublicacion');
@@ -132,6 +165,27 @@ app.get('/api/get_ticket', async (req, res) => {
 
     var valorCompra = doc.get('valorCompra');
 
+    var referenciaCategoria = doc.get('categoriaRef');//USAR categoriaRef
+
+    var docData = doc.data();
+
+    console.log("imprimiendo categoria objeto")
+    console.log(referenciaCategoria.path)
+    //console.log(referenciaCategoria)//esto sirve, es el gran output
+    //console.log(docData['referenciaCategoria'])
+
+    //var laCategoriaRef = await db.doc(referenciaCategoria.path).get('categoria'); get 'categoria' creo que es inncecesario
+    var laCategoriaRef = db.doc(referenciaCategoria.path)//.get('categoria');
+
+    console.log(await laCategoriaRef.get().then((value) =>
+    console.log("Fetched ==>>>"+value.data()["categoria"])))
+    //console.log(categoriaObjeto)
+
+
+    //var docData = doc.data();
+
+    //var categoriaID = {id:doc.id,...docData}//3 puntos es funcion 
+
     const tdata = {
       'id': doc.id,//este es el id de firestore
       'titulo': doc.get('titulo'),
@@ -140,7 +194,7 @@ app.get('/api/get_ticket', async (req, res) => {
       'fechaVencimiento': nuevafechavenc,
       'fechaPublicacion': nuevafechapubli,
       'valorCompra': valorCompra,
-      'categoria': doc.get('categoria'),
+      'categoria': referenciaCategoria,
       'fechaCreacion':nuevafechacrea
     };
 
