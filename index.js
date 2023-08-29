@@ -249,7 +249,8 @@ app.post("/api/update_ticket/:id", async (req, res) => {
     fechaVencimiento:new Date(req.body.fechaVencimiento),
     fechaPublicacion:new Date(req.body.fechaPublicacion),
     valorCompra:parseFloat(req.body.valorCompra),
-    categoria:req.body.categoria,
+    //categoria:req.body.categoria,
+    categoriaRef: categoriasCollectionRef.doc(req.body.categoriaID),
     }
     //, SetOptions(merge,true) usamos update en vez de set en node.js 
   );
