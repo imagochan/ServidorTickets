@@ -118,6 +118,14 @@ app.get('/api/get_ticket', async (req, res) => {
     console.log("categoria id es definido y no nulo");
     //filtrado = filtrado.where('categoriaID','==',categoriaID);
     //deberia cambiar
+    // var miDocRef = await categoriasCollectionRef.doc(categoriaID).get();
+    // var miDocRefData = miDocRef.data();
+    // console.log(miDocRefData);
+    // console.log(miDocRef.path);
+
+    //necesita la pleca inicial para funcionar, asi sale en firestore
+    var categoriaRef = db.doc(`/categorias/${categoriaID}`);
+    filtrado = filtrado.where('categoriaRef','==',categoriaRef);
   }
 
   //Filtrando por fecha de Creacion
