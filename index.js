@@ -67,7 +67,7 @@ app.post("/api/add_ticket", async (req, res) => {
     fechaVencimiento: new Date(req.body.fechaVencimiento),
     fechaPublicacion: new Date(req.body.fechaPublicacion),
     valorCompra: parseFloat(req.body.valorCompra),
-    categoriaID: req.body.categoriaID,
+    //categoriaID: req.body.categoriaID,
     //categoria: req.body.categoria,
     categoriaRef: categoriasCollectionRef.doc(req.body.categoriaID),
     //it can also be done with seconds to be more accurate, but the exercise only requires the day, not the time
@@ -110,14 +110,14 @@ app.get('/api/get_ticket', async (req, res) => {
 
   //Filtrando por categoria
   if ( categoriaID == '' )
-  if ( categoriaID == '' )
   {
     console.log("categoria id no fue especificada");
   }
   else
   {
     console.log("categoria id es definido y no nulo");
-    filtrado = filtrado.where('categoriaID','==',categoriaID);
+    //filtrado = filtrado.where('categoriaID','==',categoriaID);
+    //deberia cambiar
   }
 
   //Filtrando por fecha de Creacion
@@ -151,43 +151,24 @@ app.get('/api/get_ticket', async (req, res) => {
   //limpiamos el array de tickets a enviar 
   ticketData = [];
 
+  await Promise.all(
   //llenamos el array con los tickets existentes en firestore
-  snapshot.forEach(async doc => {
-    //const unTicket = doc.data();
-
-    //unTicket.c
-
-    // { timestamp: time 2323 seconds 2323 }
+  snapshot.docs.map(async doc => {
     const fechaVenc = doc.get('fechaVencimiento');
     const fechaPubli = doc.get('fechaPublicacion');
     const fechaCrea = doc.get('fechaCreacion');
-
     var nuevafechavenc = fechaVenc.toDate();
     var nuevafechapubli = fechaPubli.toDate();
     var nuevafechacrea = fechaCrea.toDate();
-
     var valorCompra = doc.get('valorCompra');
 
     var referenciaCategoria = doc.get('categoriaRef');//USAR categoriaRef
-
-    var docData = doc.data();
-
     console.log("imprimiendo categoria objeto")
     console.log(referenciaCategoria.path)
-    //console.log(referenciaCategoria)//esto sirve, es el gran output
-    //console.log(docData['referenciaCategoria'])
-
-    //var laCategoriaRef = await db.doc(referenciaCategoria.path).get('categoria'); get 'categoria' creo que es inncecesario
-    var laCategoriaRef = db.doc(referenciaCategoria.path)//.get('categoria');
-
-    console.log(await laCategoriaRef.get().then((value) =>
-    console.log("Fetched ==>>>"+value.data()["categoria"])))
-    //console.log(categoriaObjeto)
-
-
-    //var docData = doc.data();
-
-    //var categoriaID = {id:doc.id,...docData}//3 puntos es funcion 
+    var laCategoriaRef = db.doc(referenciaCategoria.path)
+    var categoriaDesdeRef = await laCategoriaRef.get()
+    var categoriasRefData = categoriaDesdeRef.data();
+    console.log(categoriasRefData['categoria'])
 
     const tdata = {
       'id': doc.id,//este es el id de firestore
@@ -197,27 +178,15 @@ app.get('/api/get_ticket', async (req, res) => {
       'fechaVencimiento': nuevafechavenc,
       'fechaPublicacion': nuevafechapubli,
       'valorCompra': valorCompra,
-      'categoria': referenciaCategoria,
+      'categoriaID': categoriasRefData['categoria'],
       'fechaCreacion':nuevafechacrea
     };
-
     //recogemos todo y filtramos despues
     ticketData.push(tdata)
-
-    //validar del lado de la app que el rango de valor de compra sea mayor que 0
-    //tambien que el rango de valor de compra Start sea menor que el End
-
-    // if ( valorCompraEnd == 0 || valorCompraStart == 0) {
-    //   ticketData.push(tdata);  
-    // }
-    // else if(valorCompra >= valorCompraStart && valorCompra <= valorCompraEnd ) {
-    //   ticketData.push(tdata);
-    // }
-    
-    //ticketData.filter
-    //leer la documentacion de .filter para filtrar valor de compra y titulo a buscar
-
+    console.log(ticketData)
   })
+  )
+
 
   if (valorCompraEnd != 0 || valorCompraStart != 0) {
     ticketData = ticketData.filter(function(value){
@@ -251,6 +220,8 @@ app.get('/api/get_ticket', async (req, res) => {
       'tickets': ticketData
     });
   }
+
+  
 })
 
 //API para actualizar un ticket de la lista de tickets en firestore
